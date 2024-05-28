@@ -17,6 +17,9 @@ public class Tweet {
         this.date=LocalDate.now();
         this.time=LocalTime.now();
     }
+    public Tweet(String content) {
+        this.content = content;
+    }
     public Tweet(){}
 
     public Integer getId() {

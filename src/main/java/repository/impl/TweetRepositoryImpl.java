@@ -41,9 +41,10 @@ public class TweetRepositoryImpl implements TweetRepository {
         String updateQuery = """
                 UPDATE tweet SET content = ?  WHERE id = ?
                 """;
+
         PreparedStatement preparedStatement = connection.prepareStatement(updateQuery);
         preparedStatement.setString(1, tweet.getContent());
-        preparedStatement.setInt(2, tweet.getUser().getId());
+        preparedStatement.setInt(2, tweet.getId());
         preparedStatement.executeUpdate();
         preparedStatement.close();
         return tweet;
