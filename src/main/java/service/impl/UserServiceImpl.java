@@ -25,7 +25,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Tweet updateTweet(Tweet tweet, String newContent, Integer tweetId) throws SQLException {
+    public Tweet updateTweet( String newContent, Integer tweetId) throws SQLException {
+        Tweet tweet = tweetService.findById(tweetId);
         tweet.setContent(newContent);
         tweet.setId(tweetId);
         return tweetService.update(tweet);

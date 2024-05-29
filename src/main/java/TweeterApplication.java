@@ -22,6 +22,6 @@ public class TweeterApplication {
         Tweet tweet = ApplicationContext.getInstance().getUserService().findTweetById(1);
         System.out.println(tweet);
        // System.out.println(tweet.getUser().getId());
-      Tweet tweet1=  ApplicationContext.getInstance().getUserService().updateTweet(tweet,"newContent",1);
+      Tweet tweet1=  ApplicationContext.getInstance().getUserService().updateTweet("newContent",1);
     }
 }
