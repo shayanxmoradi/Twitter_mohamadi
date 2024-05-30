@@ -63,6 +63,16 @@ public class Tweet {
         this.user = user;
     }
 
+//    @Override
+//    public String toString() {
+//        return "Tweet{" +
+//                "id=" + id +
+//                ", content='" + content + '\'' +
+//                ", date=" + date +
+//                ", time=" + time +
+//                '}';
+//    }
+
     @Override
     public String toString() {
         return "Tweet{" +
@@ -70,6 +80,7 @@ public class Tweet {
                 ", content='" + content + '\'' +
                 ", date=" + date +
                 ", time=" + time +
+                ", user=" + user +
                 '}';
     }
 }

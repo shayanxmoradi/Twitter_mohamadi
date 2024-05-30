@@ -51,27 +51,48 @@ public class TweetRepositoryImpl implements TweetRepository {
     public Tweet update(String newContent, Integer tweetId) throws SQLException {
         Tweet returnTweet = null;
         String selectQuery = """
-                                SELECT *
-                From Tweet t where t.id = ?
-                                """;
+                                                SELECT t.*, u.username as userName,u.id as userId,u.password as password
+                                From tweet as t 
+                                inner join twitter2.users as u on u.id = t.user_id
+                where t.id = ? AND t.user_id = ?
+                                                """;
         PreparedStatement preparedStatement = connection.prepareStatement(
                 selectQuery,
                 ResultSet.TYPE_SCROLL_INSENSITIVE,
                 ResultSet.CONCUR_UPDATABLE);
 
         preparedStatement.setInt(1, tweetId);
+        preparedStatement.setInt(2, AuthHolder.tokenId);
         ResultSet resultSet = preparedStatement.executeQuery();
 
         if (resultSet.next()) {
             returnTweet = new Tweet();
-            returnTweet.setContent(newContent);
+
+            resultSet.updateString("content", newContent);
+            resultSet.updateRow();
+            returnTweet.setId(resultSet.getInt("id"));
+            returnTweet.setContent(resultSet.getString("content"));
             returnTweet.setTime(resultSet.getTime("create_time").toLocalTime());
             returnTweet.setDate(resultSet.getDate("create_date").toLocalDate());
-         //   returnTweet.setUser(new User(AuthHolder.tokenName));
-            returnTweet.setId(resultSet.getInt("id"));
+               returnTweet.setUser(userMapper(resultSet));
         }
         preparedStatement.close();
         return returnTweet;
+    }
+    private User userMapper(ResultSet resultSet) throws SQLException {
+
+        User user = new User();
+
+
+       System.out.println(resultSet.getMetaData().getColumnLabel(2));
+
+
+        user.setId(resultSet.getInt("userId"));
+            user.setUsername(resultSet.getString("userName"));
+            user.setPassword(resultSet.getString("password"));
+
+
+        return user;
     }
 
     @Override
@@ -87,7 +108,8 @@ public class TweetRepositoryImpl implements TweetRepository {
 
         if (resultSet.next()) {
             tweet = new Tweet();
-            tweet.setId(resultSet.getInt("id"));
+
+            tweet.setId(resultSet.getInt("user_id"));
             tweet.setContent(resultSet.getString("content"));
             tweet.setDate(resultSet.getDate("create_date").toLocalDate());
             tweet.setTime(resultSet.getTime("create_time").toLocalTime());

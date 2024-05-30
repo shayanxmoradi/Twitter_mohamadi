@@ -20,7 +20,8 @@ public class TweeterApplication {
 //        System.out.println(tweet);
 
        // System.out.println(tweet.getUser().getId());
-      Tweet tweet1=  ApplicationContext.getInstance().getUserService().updateTweet("its asdf",1);
+        ApplicationContext.getInstance().getUserService().login("fatemeh","22222");
+      Tweet tweet1=  ApplicationContext.getInstance().getUserService().updateTweet("asdr",1);
         System.out.println(tweet1);
     }
 }
