@@ -89,6 +89,5 @@ public class UserRepositoryImpl implements UserRepository {
         ResultSet resultSet = preparedStatement.executeQuery();
         return resultSet.next() && resultSet.getInt(1) > 0;
 
-
     }
 }

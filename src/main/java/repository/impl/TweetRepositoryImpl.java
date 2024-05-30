@@ -74,22 +74,23 @@ public class TweetRepositoryImpl implements TweetRepository {
             returnTweet.setContent(resultSet.getString("content"));
             returnTweet.setTime(resultSet.getTime("create_time").toLocalTime());
             returnTweet.setDate(resultSet.getDate("create_date").toLocalDate());
-               returnTweet.setUser(userMapper(resultSet));
+            returnTweet.setUser(userMapper(resultSet));
         }
         preparedStatement.close();
         return returnTweet;
     }
+
     private User userMapper(ResultSet resultSet) throws SQLException {
 
         User user = new User();
 
 
-       System.out.println(resultSet.getMetaData().getColumnLabel(2));
+        System.out.println(resultSet.getMetaData().getColumnLabel(2));
 
 
         user.setId(resultSet.getInt("userId"));
-            user.setUsername(resultSet.getString("userName"));
-            user.setPassword(resultSet.getString("password"));
+        user.setUsername(resultSet.getString("userName"));
+        user.setPassword(resultSet.getString("password"));
 
 
         return user;
@@ -116,5 +117,18 @@ public class TweetRepositoryImpl implements TweetRepository {
         }
         preparedStatement.close();
         return tweet;
+    }
+
+    @Override
+    public boolean deleteTweetById(Integer id) throws SQLException {
+        String selectQuery = """
+                                Delete  
+                From Tweet t where t.id = ?
+                                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(selectQuery);
+        preparedStatement.setInt(1, id);
+        int a = preparedStatement.executeUpdate();
+        if (a > 0) return true;
+        return false;
     }
 }

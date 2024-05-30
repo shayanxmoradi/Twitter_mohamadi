@@ -36,7 +36,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean deleteTweetById(Integer id) throws SQLException {
-        return false;
+
+        return tweetService.deleteById(id);
     }
 
     @Override

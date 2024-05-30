@@ -27,4 +27,9 @@ public class TweetServiceImpl implements TweetService {
     public Tweet findById(Integer id) throws SQLException {
         return tweetRepository.findById(id);
     }
+
+    @Override
+    public boolean deleteById(Integer id) throws SQLException {
+      return   tweetRepository.deleteTweetById(id);
+    }
 }
