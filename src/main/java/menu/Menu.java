@@ -1,6 +1,7 @@
 package menu;
 
 import menu.util.Input;
+import menu.util.Message;
 import util.ApplicationContext;
 
 import java.sql.SQLException;
@@ -17,7 +18,7 @@ public class Menu {
                 case 1 -> SignupMenu.show();
                 case 2 -> LoginMenu.showLoginMenu();
                 case 3 -> System.exit(0);
-                default -> System.out.println("Invalid option, please try again");
+                default -> System.out.println(Message.getInvalidInputMessage());
             }
 
         }
