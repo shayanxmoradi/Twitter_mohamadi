@@ -11,4 +11,7 @@ public interface UserService {
     Tweet createTweet(Tweet tweet) throws SQLException;
     boolean deleteTweetById(Integer id) throws SQLException;
     Tweet findTweetById(Integer id) throws SQLException;
+    User findUserById(Integer id) throws SQLException;
+    boolean login (String username, String password) throws SQLException;
+    boolean signUp(String username, String password) throws SQLException;
 }

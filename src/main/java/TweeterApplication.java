@@ -19,9 +19,8 @@ public class TweeterApplication {
 //        tweet=ApplicationContext.getInstance().getTweetService().save(tweet);
 //        System.out.println(tweet);
 
-        Tweet tweet = ApplicationContext.getInstance().getUserService().findTweetById(1);
-        System.out.println(tweet);
        // System.out.println(tweet.getUser().getId());
-      Tweet tweet1=  ApplicationContext.getInstance().getUserService().updateTweet("newContent",1);
+      Tweet tweet1=  ApplicationContext.getInstance().getUserService().updateTweet("its asdf",1);
+        System.out.println(tweet1);
     }
 }

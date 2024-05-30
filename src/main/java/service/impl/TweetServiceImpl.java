@@ -19,8 +19,8 @@ public class TweetServiceImpl implements TweetService {
     }
 
     @Override
-    public Tweet update(Tweet tweet) throws SQLException {
-        return tweetRepository.update(tweet);
+    public Tweet update(String newContent,Integer tweetId) throws SQLException {
+        return tweetRepository.update(newContent,tweetId);
     }
 
     @Override

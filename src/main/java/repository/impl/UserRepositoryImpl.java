@@ -30,12 +30,65 @@ public class UserRepositoryImpl implements UserRepository {
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 user.setId(generatedKeys.getInt("id"));
-           generatedKeys.close();
+                generatedKeys.close();
             }
 
 
         }
         preparedStatement.close();
         return user;
+    }
+
+    @Override
+    public User findById(int id) throws SQLException {
+        String insertQuery = """
+                SELECT * from users where id=?
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(insertQuery,
+                PreparedStatement.RETURN_GENERATED_KEYS);
+        preparedStatement.setInt(1, id);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            User user = new User();
+            user.setId(resultSet.getInt("id"));
+            user.setUsername(resultSet.getString("username"));
+            user.setPassword(resultSet.getString("password"));
+            return user;
+        }
+        return null;
+    }
+
+    @Override
+    public User findByUsernameAndPassword(String username, String password) throws SQLException {
+        String insertQuery = """
+                SELECT * from users where username =? and password=?
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(insertQuery);
+        preparedStatement.setString(1, username);
+        preparedStatement.setString(2, password);
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            User user = new User();
+            user.setId(resultSet.getInt("id"));
+            user.setUsername(resultSet.getString("username"));
+            user.setPassword(resultSet.getString("password"));
+            return user;
+        }
+        return null;
+    }
+
+    @Override
+    public boolean existsByUsername(String username) throws SQLException {
+        String insertQuery = """
+                SELECT count(id) username from users where username =? 
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(insertQuery);
+        preparedStatement.setString(1, username);
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+        return resultSet.next() && resultSet.getInt(1) > 0;
+
+
     }
 }

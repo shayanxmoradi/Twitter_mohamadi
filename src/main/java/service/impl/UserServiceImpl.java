@@ -2,10 +2,10 @@ package service.impl;
 
 import entity.Tweet;
 import entity.User;
-import repository.TweetRepository;
 import repository.UserRepository;
 import service.TweetService;
 import service.UserService;
+import util.AuthHolder;
 
 import java.sql.SQLException;
 
@@ -25,11 +25,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Tweet updateTweet( String newContent, Integer tweetId) throws SQLException {
-        Tweet tweet = tweetService.findById(tweetId);
-        tweet.setContent(newContent);
-        tweet.setId(tweetId);
-        return tweetService.update(tweet);
+    public Tweet updateTweet(String newContent, Integer tweetId) throws SQLException {
+        return tweetService.update(newContent, tweetId);
     }
 
     @Override
@@ -45,5 +42,31 @@ public class UserServiceImpl implements UserService {
     @Override
     public Tweet findTweetById(Integer id) throws SQLException {
         return tweetService.findById(id);
+    }
+
+    @Override
+    public User findUserById(Integer id) throws SQLException {
+        return userRepository.findById(id);
+    }
+
+    @Override
+    public boolean login(String username, String password) throws SQLException {
+        User user = userRepository.findByUsernameAndPassword(username, password);
+        if (user != null) {
+            AuthHolder.tokenId = user.getId();
+            AuthHolder.tokenName = user.getUsername();
+            return true;
+        }
+        return false;
+
+    }
+
+    @Override
+    public boolean signUp(String username, String password) throws SQLException {
+        if (!userRepository.existsByUsername(username)) {
+            userRepository.save(new User(username, password));
+            return true;
+        }
+        return false;
     }
 }
