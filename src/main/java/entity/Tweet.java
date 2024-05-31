@@ -27,6 +27,7 @@ public class Tweet {
         return id;
     }
 
+
     public String getContent() {
         return content;
     }
