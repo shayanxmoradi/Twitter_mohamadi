@@ -27,7 +27,7 @@ public class TweetRepositoryImpl implements TweetRepository {
         preparedStatement.setString(1, tweet.getContent());
         preparedStatement.setTime(2, Time.valueOf(tweet.getTime()));
         preparedStatement.setDate(3, Date.valueOf(tweet.getDate()));
-        preparedStatement.setInt(4, tweet.getUser().getId());
+        preparedStatement.setInt(4, AuthHolder.tokenId);
         if (preparedStatement.executeUpdate() > 0) {
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {

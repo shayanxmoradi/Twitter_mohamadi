@@ -26,6 +26,8 @@ public class SignupMenu {
 
                     if (ApplicationContext.getInstance().getUserService().signUp(inputedUsername, inputedPassword)
                     ) {
+                        System.out.println(" your account has been created \n");
+
                         break signupMenu;
                     }
                     System.out.println(Message.getExistMessage("username"));
@@ -36,6 +38,7 @@ public class SignupMenu {
                 default -> System.out.println(Message.getInvalidInputMessage());
 
             }
+
 
         }
     }

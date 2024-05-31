@@ -8,6 +8,9 @@ import java.sql.SQLException;
 import java.util.Scanner;
 
 public class Menu {
+    public static void main(String[] args) throws SQLException {
+        show();
+    }
     public static void show() throws SQLException {
         System.out.println("welcome to the menu");
         while (true) {
