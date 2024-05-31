@@ -14,14 +14,16 @@ public class Tweet {
     public Tweet(String content, User user) {
         this.content = content;
         this.user = user;
-        this.date=LocalDate.now();
-        this.time=LocalTime.now();
+        this.date = LocalDate.now();
+        this.time = LocalTime.now();
     }
+
     public Tweet(String content) {
         this.content = content;
     }
 
-    public Tweet(){}
+    public Tweet() {
+    }
 
     public Integer getId() {
         return id;
@@ -76,11 +78,11 @@ public class Tweet {
     @Override
     public String toString() {
         return "Tweet{" +
-                "id=" + id +
-                ", content='" + content + '\'' +
-                ", date=" + date +
-                ", time=" + time +
-                ", user=" + user +
-                '}';
+               "id=" + id +
+               ", content='" + content + '\'' +
+               ", date=" + date +
+               ", time=" + time +
+               ", user=" + user +
+               '}';
     }
 }
