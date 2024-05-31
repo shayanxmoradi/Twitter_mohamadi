@@ -1,5 +1,7 @@
 package util;
 
+import base.repository.BaseRepository;
+import base.repository.BaseUserRepository;
 import config.DataSource;
 import repository.TweetRepository;
 import repository.UserRepository;
@@ -7,6 +9,7 @@ import repository.impl.TweetRepositoryImpl;
 import repository.impl.UserRepositoryImpl;
 import service.TweetService;
 import service.UserService;
+import service.auth.AuthServiceImpl;
 import service.impl.TweetServiceImpl;
 import service.impl.UserServiceImpl;
 
@@ -27,8 +30,10 @@ public class ApplicationContext {
         Connection connection = DataSource.getConnection();
         UserRepository userRepository=new UserRepositoryImpl(connection);
         TweetRepository tweetRepository=new TweetRepositoryImpl(connection);
+        AuthServiceImpl authenticationService=new AuthServiceImpl();
+
         tweetService = new TweetServiceImpl(tweetRepository);
-        userService = new UserServiceImpl(userRepository,tweetService);
+        userService = new UserServiceImpl(userRepository,tweetService,authenticationService);
 
 
     }

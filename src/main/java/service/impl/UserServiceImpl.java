@@ -5,6 +5,7 @@ import entity.User;
 import repository.UserRepository;
 import service.TweetService;
 import service.UserService;
+import service.auth.AuthServiceImpl;
 import util.AuthHolder;
 
 import java.sql.SQLException;
@@ -12,10 +13,12 @@ import java.sql.SQLException;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final TweetService tweetService;
+    private final AuthServiceImpl authenticationServiceImp;
 
-    public UserServiceImpl(UserRepository userRepository, TweetService tweetService) {
+    public UserServiceImpl(UserRepository userRepository, TweetService tweetService, AuthServiceImpl authenticationServiceImp) {
         this.userRepository = userRepository;
         this.tweetService = tweetService;
+        this.authenticationServiceImp = authenticationServiceImp;
     }
 
     @Override
@@ -35,7 +38,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean deleteTweetById(Integer id) throws SQLException {
+    public boolean deleteTweet(Integer id) throws SQLException {
 
         return tweetService.deleteById(id);
     }
@@ -45,13 +48,11 @@ public class UserServiceImpl implements UserService {
         return tweetService.findById(id);
     }
 
-    @Override
-    public User findUserById(Integer id) throws SQLException {
-        return userRepository.findById(id);
-    }
+
 
     @Override
     public boolean login(String username, String password) throws SQLException {
+
         User user = userRepository.findByUsernameAndPassword(username, password);
         if (user != null) {
             AuthHolder.tokenId = user.getId();
@@ -59,6 +60,7 @@ public class UserServiceImpl implements UserService {
             return true;
         }
         return false;
+
 
     }
 

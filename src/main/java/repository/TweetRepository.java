@@ -1,10 +1,11 @@
 package repository;
 
+import base.repository.BaseRepository;
 import entity.Tweet;
 
 import java.sql.SQLException;
 
-public interface TweetRepository {
+public interface TweetRepository extends BaseRepository {
     Tweet save(Tweet tweet) throws SQLException;
     Tweet update(String newContent,Integer tweetId) throws SQLException;
     Tweet findById(Integer id) throws SQLException;
