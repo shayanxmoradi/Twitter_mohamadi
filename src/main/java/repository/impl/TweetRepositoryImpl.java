@@ -28,19 +28,32 @@ public class TweetRepositoryImpl implements TweetRepository {
         preparedStatement.setTime(2, Time.valueOf(tweet.getTime()));
         preparedStatement.setDate(3, Date.valueOf(tweet.getDate()));
         preparedStatement.setInt(4, AuthHolder.tokenId);
-        if (preparedStatement.executeUpdate() > 0) {
-            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                tweet.setId(generatedKeys.getInt("id"));
-            }
 
+        if (preparedStatement.executeUpdate() > 0) {
+            ResultSet resultSet = preparedStatement.getGeneratedKeys();
+            if (resultSet.next()) {
+                tweet.setId(resultSet.getInt("id"));
+                resultSet.close();
+                preparedStatement.close();
+                return tweet;
+            }
+            resultSet.close();
         }
-        return tweet;
+        preparedStatement.close();
+        return null;
     }
 
     /**
      * TYPE_SCROLL_INSENSITIVE +CONCUR_UPDATABLE -> we can change(update) in Database too. its
      * not just normal select Query
+     * preperstatment vs statment :
+     * preprestatment is stronger aginst sql injection + stronger
+     * we can write paramteric queries
+     * we can backward forward in preprestatment
+     * preprestatment is easier to write
+     * INSENTIVE : do you care about changes of other users
+     * CONCUR_UPDATABLE: you can update row with concur
+     * JAVA collector doesn't care about SQL datas -> we should handle them on by our self
      *
      * @param
      * @param tweetId
@@ -51,7 +64,7 @@ public class TweetRepositoryImpl implements TweetRepository {
     public Tweet update(String newContent, Integer tweetId) throws SQLException {
         Tweet returnTweet = null;
         String selectQuery = """
-                                                SELECT t.*, u.username as userName,u.id as userId,u.password as password
+                           SELECT *
                                 From tweet as t 
                                 inner join twitter2.users as u on u.id = t.user_id
                 where t.id = ? AND t.user_id = ?
@@ -64,35 +77,30 @@ public class TweetRepositoryImpl implements TweetRepository {
         preparedStatement.setInt(1, tweetId);
         preparedStatement.setInt(2, AuthHolder.tokenId);
         ResultSet resultSet = preparedStatement.executeQuery();
-
         if (resultSet.next()) {
             returnTweet = new Tweet();
-
             resultSet.updateString("content", newContent);
             resultSet.updateRow();
             returnTweet.setId(resultSet.getInt("id"));
             returnTweet.setContent(resultSet.getString("content"));
             returnTweet.setTime(resultSet.getTime("create_time").toLocalTime());
             returnTweet.setDate(resultSet.getDate("create_date").toLocalDate());
+            //mapping : converting databse datas to obj.
             returnTweet.setUser(userMapper(resultSet));
         }
+        resultSet.close();
         preparedStatement.close();
+
+
+        //todo: close connection
         return returnTweet;
     }
 
     private User userMapper(ResultSet resultSet) throws SQLException {
-
         User user = new User();
-
-
-        System.out.println(resultSet.getMetaData().getColumnLabel(2));
-
-
-        user.setId(resultSet.getInt("userId"));
-        user.setUsername(resultSet.getString("userName"));
+        user.setId(resultSet.getInt("user_id"));
+        user.setUsername(resultSet.getString("username"));
         user.setPassword(resultSet.getString("password"));
-
-
         return user;
     }
 
@@ -106,15 +114,14 @@ public class TweetRepositoryImpl implements TweetRepository {
         PreparedStatement preparedStatement = connection.prepareStatement(selectQuery);
         preparedStatement.setInt(1, id);
         ResultSet resultSet = preparedStatement.executeQuery();
-
         if (resultSet.next()) {
             tweet = new Tweet();
-
             tweet.setId(resultSet.getInt("user_id"));
             tweet.setContent(resultSet.getString("content"));
             tweet.setDate(resultSet.getDate("create_date").toLocalDate());
             tweet.setTime(resultSet.getTime("create_time").toLocalTime());
         }
+        resultSet.close();
         preparedStatement.close();
         return tweet;
     }
@@ -127,8 +134,8 @@ public class TweetRepositoryImpl implements TweetRepository {
                                 """;
         PreparedStatement preparedStatement = connection.prepareStatement(selectQuery);
         preparedStatement.setInt(1, id);
-        int a = preparedStatement.executeUpdate();
-        if (a > 0) return true;
-        return false;
+        int affectedRows = preparedStatement.executeUpdate();
+        preparedStatement.close();
+        return affectedRows > 0;
     }
 }

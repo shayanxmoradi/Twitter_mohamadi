@@ -27,13 +27,12 @@ public class UserRepositoryImpl implements UserRepository {
         preparedStatement.setString(1, user.getUsername());
         preparedStatement.setString(2, user.getPassword());
         if (preparedStatement.executeUpdate() > 0) {
-            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                user.setId(generatedKeys.getInt("id"));
-                generatedKeys.close();
+            ResultSet resultset = preparedStatement.getGeneratedKeys();
+            if (resultset.next()) {
+                user.setId(resultset.getInt("id"));
+                resultset.close();
             }
-
-
+            resultset.close();
         }
         preparedStatement.close();
         return user;
@@ -53,13 +52,19 @@ public class UserRepositoryImpl implements UserRepository {
             user.setId(resultSet.getInt("id"));
             user.setUsername(resultSet.getString("username"));
             user.setPassword(resultSet.getString("password"));
+            resultSet.close();
+            preparedStatement.close();
             return user;
         }
+        resultSet.close();
+        preparedStatement.close();
         return null;
     }
 
     @Override
     public User findByUsernameAndPassword(String username, String password) throws SQLException {
+        User user = null;
+
         String insertQuery = """
                 SELECT * from users where username =? and password=?
                 """;
@@ -69,25 +74,29 @@ public class UserRepositoryImpl implements UserRepository {
 
         ResultSet resultSet = preparedStatement.executeQuery();
         if (resultSet.next()) {
-            User user = new User();
+            user = new User();
             user.setId(resultSet.getInt("id"));
             user.setUsername(resultSet.getString("username"));
             user.setPassword(resultSet.getString("password"));
-            return user;
+
         }
-        return null;
+        resultSet.close();
+        preparedStatement.close();
+        return user;
     }
 
     @Override
     public boolean existsByUsername(String username) throws SQLException {
         String insertQuery = """
-                SELECT count(id) username from users where username =? 
+                SELECT count(id)  from users where username =? 
                 """;
         PreparedStatement preparedStatement = connection.prepareStatement(insertQuery);
         preparedStatement.setString(1, username);
-
         ResultSet resultSet = preparedStatement.executeQuery();
-        return resultSet.next() && resultSet.getInt(1) > 0;
+        boolean result = resultSet.next() && resultSet.getInt(1) > 0;
+        resultSet.close();
+        preparedStatement.close();
+        return result;
 
     }
 }

@@ -12,6 +12,12 @@ import service.impl.UserServiceImpl;
 
 import java.sql.Connection;
 
+/**
+ * this class is using singleton(Eager)
+ * has private constractor
+ * we use static block
+ * we definde servieces static so we can iniate them in static block
+ */
 public class ApplicationContext {
 
     private static final ApplicationContext INSTANCE=new ApplicationContext();
@@ -25,8 +31,10 @@ public class ApplicationContext {
     }
     static {
         Connection connection = DataSource.getConnection();
+
         UserRepository userRepository=new UserRepositoryImpl(connection);
         TweetRepository tweetRepository=new TweetRepositoryImpl(connection);
+
         tweetService = new TweetServiceImpl(tweetRepository);
         userService = new UserServiceImpl(userRepository,tweetService);
 

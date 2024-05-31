@@ -9,19 +9,18 @@ public class Tweet {
     private String content;
     private LocalDate date;
     private LocalTime time;
-    private User user;//private  User user
+    private User user;
+    //unidirectional relation
 
-    public Tweet(String content, User user) {
+    public Tweet(String content) {
         this.content = content;
-        this.user = user;
         this.date=LocalDate.now();
         this.time=LocalTime.now();
     }
-    public Tweet(String content) {
-        this.content = content;
-    }
 
-    public Tweet(){}
+    public Tweet(){
+
+    }
 
     public Integer getId() {
         return id;

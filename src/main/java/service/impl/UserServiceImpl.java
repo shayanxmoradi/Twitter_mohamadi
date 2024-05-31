@@ -25,30 +25,37 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Tweet updateTweet(String newContent, Integer tweetId) throws SQLException {
-        return tweetService.update(newContent, tweetId);
+    public User findById(Integer id) throws SQLException {
+        return userRepository.findById(id);
     }
 
+    /**
+     * service could use each other
+     * we don't use repos in each other
+     * @param tweet
+     * @return
+     * @throws SQLException
+     */
     @Override
     public Tweet createTweet(Tweet tweet) throws SQLException {
         return tweetService.save(tweet);
     }
 
     @Override
-    public boolean deleteTweetById(Integer id) throws SQLException {
+    public boolean deleteTweet(Integer id) throws SQLException {
 
         return tweetService.deleteById(id);
     }
 
     @Override
-    public Tweet findTweetById(Integer id) throws SQLException {
-        return tweetService.findById(id);
+    public Tweet updateTweet(String newContent, Integer tweetId) throws SQLException {
+        return tweetService.update(newContent, tweetId);
     }
 
-    @Override
-    public User findUserById(Integer id) throws SQLException {
-        return userRepository.findById(id);
-    }
+
+
+
+
 
     @Override
     public boolean login(String username, String password) throws SQLException {

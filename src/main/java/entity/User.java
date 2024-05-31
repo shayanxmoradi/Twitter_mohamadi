@@ -6,13 +6,13 @@ public class User {
     private String password;
 
     public User() {}
+    public User(Integer id){
+        this.id = id;
+    }
 
     public User(String username, String password) {
         this.username = username;
         this.password = password;
-    }
-    public User(String username){
-        this.username = username;
     }
 
     public Integer getId() {
