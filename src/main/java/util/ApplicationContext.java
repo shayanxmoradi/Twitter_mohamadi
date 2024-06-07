@@ -1,6 +1,13 @@
 package util;
 
 import config.DataSource;
+import menu.Menu;
+import menu.login.LoginMenu;
+import menu.login.LoginSubmenu;
+import menu.main.MainMenu;
+import menu.signup.SignupMenu;
+import menu.util.Input;
+import menu.util.Message;
 import repository.TweetRepository;
 import repository.UserRepository;
 import repository.impl.TweetRepositoryImpl;
@@ -12,39 +19,38 @@ import service.impl.UserServiceImpl;
 
 import java.sql.Connection;
 
-/**
- * this class is using singleton(Eager)
- * has private constractor
- * we use static block
- * we definde servieces static so we can iniate them in static block
- */
 public class ApplicationContext {
 
-    private static final ApplicationContext INSTANCE=new ApplicationContext();
-    private static final   UserService userService;
-    private static final TweetService tweetService;
+    private static final ApplicationContext INSTANCE = new ApplicationContext();
+    private static Menu menu;
 
     private ApplicationContext() {
+
+        Connection connection = DataSource.getConnection();
+        UserRepository userRepository = new UserRepositoryImpl(connection);
+        AuthHolder authHolder = new AuthHolder();
+        TweetRepository tweetRepository = new TweetRepositoryImpl(connection,authHolder);
+
+        TweetService tweetService = new TweetServiceImpl(tweetRepository);
+        UserService userService = new UserServiceImpl(userRepository, tweetService, authHolder);
+
+        Input input = new Input();
+        Message message = new Message();
+        MainMenu mainMenu = new MainMenu();
+        SignupMenu signupMenu = new SignupMenu(input, message, userService);
+        LoginSubmenu loginSubmenu = new LoginSubmenu(input, message, userService);
+        LoginMenu loginMenu = new LoginMenu(input, message, loginSubmenu, userService, authHolder);
+        menu = new Menu(input, message, mainMenu, signupMenu, loginMenu);
     }
-    public  static ApplicationContext getInstance(){
+
+    public static ApplicationContext getInstance() {
         return INSTANCE;
     }
-    static {
-        Connection connection = DataSource.getConnection();
 
-        UserRepository userRepository=new UserRepositoryImpl(connection);
-        TweetRepository tweetRepository=new TweetRepositoryImpl(connection);
-
-        tweetService = new TweetServiceImpl(tweetRepository);
-        userService = new UserServiceImpl(userRepository,tweetService);
-
-
+    public Menu getMenu() {
+        return menu;
     }
-    public UserService getUserService(){
-        return userService;
-    }
-    public TweetService getTweetService(){
-        return tweetService;
-    }
+
+
 
 }

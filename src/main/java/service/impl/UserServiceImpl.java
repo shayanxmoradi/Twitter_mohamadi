@@ -12,10 +12,12 @@ import java.sql.SQLException;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final TweetService tweetService;
+    private final AuthHolder authHolder;
 
-    public UserServiceImpl(UserRepository userRepository, TweetService tweetService) {
+    public UserServiceImpl(UserRepository userRepository, TweetService tweetService, AuthHolder authHolder) {
         this.userRepository = userRepository;
         this.tweetService = tweetService;
+        this.authHolder = authHolder;
     }
 
     @Override
@@ -29,13 +31,6 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(id);
     }
 
-    /**
-     * service could use each other
-     * we don't use repos in each other
-     * @param tweet
-     * @return
-     * @throws SQLException
-     */
     @Override
     public Tweet createTweet(Tweet tweet) throws SQLException {
         return tweetService.save(tweet);
@@ -52,21 +47,15 @@ public class UserServiceImpl implements UserService {
         return tweetService.update(newContent, tweetId);
     }
 
-
-
-
-
-
     @Override
     public boolean login(String username, String password) throws SQLException {
         User user = userRepository.findByUsernameAndPassword(username, password);
         if (user != null) {
-            AuthHolder.tokenId = user.getId();
-            AuthHolder.tokenName = user.getUsername();
+            authHolder.setTokenId(user.getId());
+            authHolder.setTokenName(user.getUsername());
             return true;
         }
         return false;
-
     }
 
     @Override

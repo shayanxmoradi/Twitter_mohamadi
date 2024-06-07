@@ -1,9 +1,9 @@
-import menu.Menu;
+ import util.ApplicationContext;
 
 import java.sql.SQLException;
 
 public class TwitterApplication {
     public static void main(String[] args) throws SQLException {
-        Menu.show();
+       ApplicationContext.getInstance().getMenu().show();
     }
 }

@@ -5,8 +5,10 @@ public class User {
     private String username;
     private String password;
 
-    public User() {}
-    public User(Integer id){
+    public User() {
+    }
+
+    public User(Integer id) {
         this.id = id;
     }
 

@@ -2,8 +2,7 @@ package menu.main;
 
 public class MainMenu {
 
-
-    public static void show() {
+    public void show() {
         System.out.println("""
                 Choose your menu option:
                 1 -> Signup

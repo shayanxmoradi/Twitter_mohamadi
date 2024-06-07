@@ -6,60 +6,48 @@ import repository.TweetRepository;
 import util.AuthHolder;
 
 import java.sql.*;
-import java.time.LocalDate;
-import java.time.LocalTime;
+
 
 public class TweetRepositoryImpl implements TweetRepository {
     private final Connection connection;
+    private final AuthHolder authHolder;
 
-    public TweetRepositoryImpl(Connection connection) {
+    public TweetRepositoryImpl(Connection connection, AuthHolder authHolder) {
         this.connection = connection;
+        this.authHolder = authHolder;
     }
 
 
     @Override
-    public Tweet save(Tweet tweet) throws SQLException {
+    public Tweet save(Tweet tweet) {
         String insertQuery = """
-                insert into tweet(content,create_time,create_date,user_id) values (?,?,?,?)
-                """;
-        PreparedStatement preparedStatement = connection.prepareStatement(insertQuery,
-                PreparedStatement.RETURN_GENERATED_KEYS);
-        preparedStatement.setString(1, tweet.getContent());
-        preparedStatement.setTime(2, Time.valueOf(tweet.getTime()));
-        preparedStatement.setDate(3, Date.valueOf(tweet.getDate()));
-        preparedStatement.setInt(4, AuthHolder.tokenId);
+            insert into tweet(content,create_time,create_date,user_id) values (?,?,?,?)
+            """;
 
-        if (preparedStatement.executeUpdate() > 0) {
-            ResultSet resultSet = preparedStatement.getGeneratedKeys();
-            if (resultSet.next()) {
-                tweet.setId(resultSet.getInt("id"));
-                resultSet.close();
-                preparedStatement.close();
-                return tweet;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery,
+                PreparedStatement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setString(1, tweet.getContent());
+            preparedStatement.setTime(2, Time.valueOf(tweet.getTime()));
+            preparedStatement.setDate(3, Date.valueOf(tweet.getDate()));
+            preparedStatement.setInt(4, authHolder.getTokenId());
+
+            if (preparedStatement.executeUpdate() > 0) {
+                try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
+                    if (keys.next()) {
+                        tweet.setId(keys.getInt("id"));
+                        return tweet;
+                    }
+                }
             }
-            resultSet.close();
+        } catch (SQLException SqlE) {
+            SqlE.printStackTrace();
+            throw new RuntimeException("Error saving tweet", SqlE);
         }
-        preparedStatement.close();
         return null;
     }
 
-    /**
-     * TYPE_SCROLL_INSENSITIVE +CONCUR_UPDATABLE -> we can change(update) in Database too. its
-     * not just normal select Query
-     * preperstatment vs statment :
-     * preprestatment is stronger aginst sql injection + stronger
-     * we can write paramteric queries
-     * we can backward forward in preprestatment
-     * preprestatment is easier to write
-     * INSENTIVE : do you care about changes of other users
-     * CONCUR_UPDATABLE: you can update row with concur
-     * JAVA collector doesn't care about SQL datas -> we should handle them on by our self
-     *
-     * @param
-     * @param tweetId
-     * @return
-     * @throws SQLException
-     */
+
+
     @Override
     public Tweet update(String newContent, Integer tweetId) throws SQLException {
         Tweet returnTweet = null;
@@ -75,7 +63,7 @@ public class TweetRepositoryImpl implements TweetRepository {
                 ResultSet.CONCUR_UPDATABLE);
 
         preparedStatement.setInt(1, tweetId);
-        preparedStatement.setInt(2, AuthHolder.tokenId);
+        preparedStatement.setInt(2, authHolder.getTokenId());
         ResultSet resultSet = preparedStatement.executeQuery();
         if (resultSet.next()) {
             returnTweet = new Tweet();

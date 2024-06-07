@@ -2,12 +2,23 @@ package menu.signup;
 
 import menu.util.Input;
 import menu.util.Message;
-import util.ApplicationContext;
+import service.UserService;
 
 import java.sql.SQLException;
 
 public class SignupMenu {
-    public static void show() throws SQLException {
+
+    private final Input INPUT;
+    private final Message MESSAGE;
+    private final UserService USER_SERVICE;
+
+    public SignupMenu(Input INPUT, Message MESSAGE, UserService userService) {
+        this.INPUT = INPUT;
+        this.MESSAGE = MESSAGE;
+        this.USER_SERVICE = userService;
+    }
+
+    public void show() throws SQLException {
         signup:
         while (true) {
             System.out.println("""
@@ -15,23 +26,24 @@ public class SignupMenu {
                     2 -> Previous Menu
                     """);
 
-            switch (Input.scanner.next()) {
-                case "1" : {
-                    System.out.println(Message.getInputMessage("Username"));
-                    String username = Input.scanner.next();
-                    System.out.println(Message.getInputMessage("password"));
-                    String password = Input.scanner.next();
-                    if (ApplicationContext.getInstance().getUserService().signUp(username, password)) {
-                        System.out.println(Message.getSuccessfulMessage("sign up"));
+            switch (INPUT.scanner.next()) {
+                case "1": {
+                    System.out.println(MESSAGE.getInputMessage("Username"));
+                    String username = INPUT.scanner.next();
+                    System.out.println(MESSAGE.getInputMessage("password"));
+                    String password = INPUT.scanner.next();
+                    if (USER_SERVICE.signUp(username, password)) {
+                        System.out.println(MESSAGE.getSuccessfulMessage("sign up"));
                         break signup;
                     }
-                    System.out.println(Message.getExistMessage("username"));
-                    break ;
+                    System.out.println(MESSAGE.getExistMessage("username"));
+                    break;
                 }
-                case "2" : {
+                case "2": {
                     break signup;
                 }
-                default : System.out.println(Message.getInvalidInputMessage());
+                default:
+                    System.out.println(MESSAGE.getInvalidInputMessage());
 
             }
 

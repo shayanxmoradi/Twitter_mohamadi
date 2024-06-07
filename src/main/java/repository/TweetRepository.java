@@ -1,7 +1,6 @@
 package repository;
 
 import entity.Tweet;
-
 import java.sql.SQLException;
 
 public interface TweetRepository {

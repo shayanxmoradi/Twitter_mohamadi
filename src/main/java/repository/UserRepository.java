@@ -1,7 +1,6 @@
 package repository;
 
 import entity.User;
-
 import java.sql.SQLException;
 
 public interface UserRepository {

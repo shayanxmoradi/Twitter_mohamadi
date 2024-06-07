@@ -2,7 +2,6 @@ package service;
 
 import entity.Tweet;
 import entity.User;
-
 import java.sql.SQLException;
 
 public interface UserService {
@@ -13,4 +12,7 @@ public interface UserService {
     boolean deleteTweet(Integer id) throws SQLException;
     boolean login (String username, String password) throws SQLException;
     boolean signUp(String username, String password) throws SQLException;
+
+
+
 }

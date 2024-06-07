@@ -9,8 +9,8 @@ public class Tweet {
     private String content;
     private LocalDate date;
     private LocalTime time;
-    private User user;
-    //unidirectional relation
+    private User user; // unidirectional relation
+
 
     public Tweet(String content) {
         this.content = content;
@@ -61,16 +61,6 @@ public class Tweet {
     public void setUser(User user) {
         this.user = user;
     }
-
-//    @Override
-//    public String toString() {
-//        return "Tweet{" +
-//                "id=" + id +
-//                ", content='" + content + '\'' +
-//                ", date=" + date +
-//                ", time=" + time +
-//                '}';
-//    }
 
     @Override
     public String toString() {

@@ -1,6 +1,7 @@
 package repository.impl;
 
 import entity.User;
+import exception.UserNotFoundException;
 import repository.UserRepository;
 
 import java.sql.Connection;
@@ -62,7 +63,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User findByUsernameAndPassword(String username, String password) throws SQLException {
+    public User findByUsernameAndPassword(String username, String password) throws SQLException  {
         User user = null;
 
         String insertQuery = """
